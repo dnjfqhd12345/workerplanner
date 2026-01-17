@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>계획 상세</title>
+
+  <style>
+    :root{
+      --text:#111827;
+      --muted:#6B7280;
+      --line:#E5E7EB;
+
+      --bg:#FFFFFF;
+      --page:#F3F4F6;
+
+      /* 버튼: 밝은 파랑 + 깔끔 */
+      --blue:#3B82F6;
+      --blue-hover:#2563EB;
+
+      --radius:12px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: var(--page);
+      font-family:-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR",
+      "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+    }
+
+    /* 모바일 프레임 */
+    .phone{
+      width:min(390px, 100vw);
+      min-height:100vh;
+      margin:0 auto;
+      background: var(--bg);
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* 상단 */
+    .top{
+      padding: 14px 18px 0;
+    }
+    .appbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .home{
+      width:22px;
+      height:22px;
+      color:#9CA3AF;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+    }
+    .app-title{
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:-0.2px;
+      margin:0;
+    }
+
+    /* 내용 영역 */
+    .content{
+      padding: 12px 18px 0;
+    }
+
+    .field{
+      margin-bottom: 14px;
+    }
+
+    .label{
+      display:block;
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:-0.2px;
+      margin: 0 0 8px;
+    }
+
+    /* ✅ 수정 불가능(읽기 전용) 블록 */
+    .ro{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background:#fff;
+      padding: 12px 12px;
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:-0.2px;
+      line-height:1.55;
+      color:var(--text);
+      white-space:pre-line; /* 내용 줄바꿈 유지 */
+    }
+
+    /* 계획내용처럼 길게 보이는 블록 */
+    .ro-textarea{
+      min-height:110px; /* 작성 화면 textarea 높이랑 맞춤 */
+    }
+
+    /* 목표날짜 오른쪽 달력 아이콘 느낌(그대로 유지) */
+    .date-wrap{
+      position:relative;
+    }
+    .date-wrap .ro{
+      padding-right:40px;
+    }
+    .cal-icon{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      width:20px;
+      height:20px;
+      color:#9CA3AF;
+      pointer-events:none;
+    }
+
+    /* 하단 고정 버튼 */
+    .bottom{
+      margin-top:auto;
+      padding: 16px 18px 22px;
+      background: var(--bg);
+    }
+
+    .btn{
+      width:100%;
+      height:44px;
+      border:0;
+      border-radius: 10px;
+      color:#fff;
+      cursor:pointer;
+
+      font-weight:500;
+      font-size:12px;
+      letter-spacing:-0.2px;
+
+      background: var(--blue);
+      box-shadow: 0 6px 12px rgba(59,130,246,0.18);
+      transition: background .15s ease, box-shadow .15s ease, transform .05s ease;
+    }
+    .btn:hover{
+      background: var(--blue-hover);
+      box-shadow: 0 8px 14px rgba(37,99,235,0.20);
+    }
+    .btn:active{
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(37,99,235,0.18);
+    }
+  </style>
+</head>
+
+<body>
+<main class="phone">
+
+  <header class="top">
+    <div class="appbar">
+      <a th:href="@{/main}" class="home" aria-label="홈으로">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 10.5L12 3L21 10.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <p class="app-title">계획 상세</p>
+    </div>
+  </header>
+
+  <!-- ✅ 읽기 전용 상세 화면 -->
+  <section class="content">
+    <!-- plan 객체는 컨트롤러에서 model.addAttribute("plan", plan) 같은 식으로 내려준다고 가정 -->
+    <div class="field">
+      <label class="label">카테고리</label>
+      <div class="ro" th:text="${plan.getCategory()}">자기계발</div>
+    </div>
+
+    <div class="field">
+      <label class="label">계획명</label>
+      <div class="ro" th:text="${plan.getPlanName()}">일본어 무작정 따라하기 #3까지 공부</div>
+    </div>
+
+    <div class="field">
+      <label class="label">계획내용</label>
+      <div class="ro ro-textarea" th:text="${plan.getPlanContent()}">계획 내용이 표시됩니다.</div>
+    </div>
+
+    <div class="field">
+      <label class="label">목표날짜</label>
+      <div class="date-wrap">
+        <div class="ro" th:text="${#temporals.format(plan.getDueDate(), 'yyyy-MM-dd')}">2026-01-31</div>
+        <svg class="cal-icon" viewBox="0 0 24 24" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 2V5M16 2V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M3 9H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M6 4H18C19.6569 4 21 5.34315 21 7V19C21 20.6569 19.6569 22 18 22H6C4.34315 22 3 20.6569 3 19V7C3 5.34315 4.34315 4 6 4Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 하단 고정 버튼: 계획 목록으로 -->
+    <div class="bottom">
+      <a th:href="@{/plan/list}" style="text-decoration:none;">
+        <button class="btn" type="button">계획 목록</button>
+      </a>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

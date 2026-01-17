@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>회원가입</title>
+
+    <style>
+        :root{
+            --text:#111827;
+            --muted:#6B7280;
+            --line:#E5E7EB;
+
+            /* 버튼: 더 밝은 파랑 + 깔끔 */
+            --btn:#3B82F6;          /* 밝은 파란색 */
+            --btn-hover:#2563EB;    /* 살짝 진해지는 정도 */
+
+            --bg:#FFFFFF;
+        }
+        *{ box-sizing:border-box; }
+        body{
+            margin:0;
+            background:#f3f4f6;
+            font-family:-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR",
+            "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color:var(--text);
+        }
+
+        .phone{
+            width:min(390px, 100vw);
+            min-height:100vh;
+            margin:0 auto;
+            background:var(--bg);
+            display:flex;
+            flex-direction:column;
+        }
+
+        /* 상단 바: 가운데 텍스트 + 왼쪽 뒤로가기 */
+        .topbar{
+            display:grid;
+            grid-template-columns: 40px 1fr 40px; /* 가운데 정확히 중앙 맞추기 */
+            align-items:center;
+            padding:14px 16px 6px;
+        }
+
+        .back{
+            width:36px; height:36px;
+            border:0;
+            background:transparent;
+            border-radius:10px;
+            display:grid;
+            place-items:center;
+            color:#111827;
+            cursor:pointer;
+            justify-self:start;
+        }
+        .back:active{ background:#F3F4F6; }
+
+        .top-center{
+            justify-self:center;
+            text-align:center;
+            font-size:12px;
+            color:var(--muted);
+            display:flex;
+            align-items:center;
+            gap:6px;
+            white-space:nowrap;
+        }
+        .top-center a{
+            color:var(--btn);
+            font-weight:700;
+            text-decoration:none;
+        }
+        .top-center a:hover{ text-decoration:underline; }
+
+        .content{
+            padding:4px 24px 0;
+        }
+
+        .title{
+            margin:8px 0 6px;
+            font-size:28px;
+            font-weight:900;
+            letter-spacing:-0.3px;
+        }
+        .subtitle{
+            margin:0 0 18px;
+            font-size:12px;
+            color:var(--muted);
+        }
+
+        .field{ margin-bottom:14px; }
+        .label{
+            display:block;
+            font-size:12px;
+            color:var(--muted);
+            margin:0 0 6px;
+            font-weight:700;
+        }
+
+        .input-wrap{ position:relative; }
+        input{
+            width:100%;
+            height:44px;
+            padding:0 12px;
+            border:1px solid var(--line);
+            border-radius:8px;
+            outline:none;
+            font-size:14px;
+            background:#fff;
+        }
+        input:focus{
+            border-color:#93C5FD;
+            box-shadow:0 0 0 3px rgba(59,130,246,.12);
+        }
+
+        .has-icon input{ padding-right:40px; }
+        .icon-btn{
+            position:absolute;
+            right:8px;
+            top:50%;
+            transform:translateY(-50%);
+            width:34px;
+            height:34px;
+            border:0;
+            background:transparent;
+            color:#9CA3AF;
+            cursor:pointer;
+            display:grid;
+            place-items:center;
+            padding:0;
+        }
+
+        /* 월급날 ~ 버튼 간격 */
+        .form-bottom-gap{ height:14px; }
+
+        /* 하단 고정 버튼 */
+        .bottom-cta{
+            margin-top:auto;
+            padding:18px 16px 22px;
+            background:var(--bg);
+        }
+
+        .btn{
+            width:100%;
+            height:52px;
+            border:0;
+            border-radius:10px;
+
+            /* 스샷처럼 글자가 두껍지 않게 */
+            font-weight:500;      /* 얇게 */
+            font-size:15px;
+            letter-spacing:-0.2px;
+
+            color:#fff;
+            cursor:pointer;
+
+            /* 깔끔한 단색(필요하면 그라데이션 제거) */
+            background: var(--btn);
+
+            /* 그림자도 과하지 않게 */
+            box-shadow: 0 8px 16px rgba(59,130,246,.18);
+        }
+        .btn:hover{
+            background: var(--btn-hover);
+            box-shadow: 0 10px 18px rgba(37,99,235,.20);
+        }
+        .btn:active{
+            transform: translateY(1px);
+            box-shadow: 0 6px 12px rgba(37,99,235,.18);
+        }
+
+        .error{
+            margin-top:10px;
+            font-size:12px;
+            color:#DC2626;
+            background:#FEF2F2;
+            border:1px solid #FECACA;
+            padding:10px 12px;
+            border-radius:8px;
+        }
+    </style>
+</head>
+
+<body>
+<main class="phone">
+
+    <div class="topbar">
+        <a class="back" th:href="@{/login}" aria-label="뒤로가기">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+
+        <!-- ✅ 가운데 정렬 -->
+        <div class="top-center">
+            <span>이미 계정이 있으신가요?</span>
+            <a th:href="@{/login}">로그인</a>
+        </div>
+
+        <!-- grid 가운데 정렬 유지용 빈 칸 -->
+        <div></div>
+    </div>
+
+    <div class="content">
+        <h1 class="title">회원가입</h1>
+        <p class="subtitle">진행하기 위해 계정을 생성하세요!</p>
+
+        <form th:action="@{/user/signup}" method="post" th:object="${userCreateForm}">
+            <div class="field">
+                <label class="label" for="username">아이디</label>
+                <div class="input-wrap">
+                    <input id="username" type="text" th:field="*{username}" required>
+                </div>
+                <div class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            </div>
+
+            <div class="field">
+                <label class="label" for="password1">패스워드</label>
+                <div class="input-wrap">
+                    <input id="password1" type="password" th:field="*{password1}" required>
+                </div>
+                <div class="error" th:if="${#fields.hasErrors('password1')}" th:errors="*{password1}"></div>
+            </div>
+
+            <div class="field">
+                <label class="label" for="password2">패스워드 확인</label>
+                <div class="input-wrap">
+                    <!-- ✅ passwordConfirm -> password2 로 수정 -->
+                    <input id="password2" type="password" th:field="*{password2}" required>
+                </div>
+                <div class="error" th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}"></div>
+            </div>
+
+            <div class="field">
+                <label class="label" for="nickname">닉네임</label>
+                <div class="input-wrap">
+                    <input id="nickname" type="text" th:field="*{nickname}" required>
+                </div>
+                <div class="error" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
+            </div>
+
+            <div class="field">
+                <label class="label" for="birthday">생일</label>
+                <div class="input-wrap has-icon">
+                    <input id="birthday" type="date" th:field="*{birthday}" required>
+                    <button class="icon-btn" type="button" aria-label="달력 열기" onclick="openDate('birthday')">
+                        <!-- svg 그대로 -->
+                    </button>
+                </div>
+                <div class="error" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></div>
+            </div>
+
+            <div class="field">
+                <label class="label" for="payday">월급날</label>
+                <div class="input-wrap">
+                    <!-- ✅ 엔티티가 Integer payday 이므로 '일자'로 받는게 자연스러움 -->
+                    <input id="payday" type="number" min="1" max="31" th:field="*{payday}" required placeholder="1~31">
+                </div>
+                <div class="error" th:if="${#fields.hasErrors('payday')}" th:errors="*{payday}"></div>
+            </div>
+
+            <div class="form-bottom-gap"></div>
+
+            <!-- ✅ 전체 에러 요약 -->
+            <div class="error" th:if="${#fields.hasGlobalErrors()}">
+                <ul style="margin:0; padding-left:18px;">
+                    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
+                </ul>
+            </div>
+
+            <div class="bottom-cta">
+                <button class="btn" type="submit">회원가입</button>
+            </div>
+        </form>
+    </div>
+
+</main>
+
+<script>
+    function openDate(id){
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.focus();
+        if (typeof el.showPicker === "function") el.showPicker();
+    }
+</script>
+</body>
+</html>
