@@ -251,7 +251,8 @@
         </a>
 
         <!-- 삭제 -->
-        <form th:action="@{/memo/delete/{id}(id=${m.id})}" method="post">
+        <form th:action="@{/memo/delete/{id}(id=${m.id})}" method="post"
+              onsubmit="return confirm('정말 삭제하시겠습니까?');">
           <button class="btn btn-delete" type="submit">메모 삭제</button>
         </form>
       </div>

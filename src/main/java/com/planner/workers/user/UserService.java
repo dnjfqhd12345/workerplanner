@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,6 +32,22 @@ public class UserService {
     public SiteUser getUser(String username){
         Optional<SiteUser> siteUser = userRepository.findByUsername(username);
         return siteUser.get();
+    }
+
+    public List<SiteUser> getGuestUsers(String memberTier){
+        List<SiteUser> guestUsers = userRepository.findByMemberTier(memberTier);
+        return guestUsers;
+    }
+
+    public void approve(Integer id){
+        SiteUser siteUser = userRepository.findSiteUserById(id);
+        siteUser.setMemberTier("member");
+        userRepository.save(siteUser);
+    }
+
+    public void reject(Integer id){
+        SiteUser siteUser = userRepository.findSiteUserById(id);
+        userRepository.delete(siteUser);
     }
 
 }

@@ -158,13 +158,14 @@
 
     <header class="top">
         <div class="appbar">
-            <div class="home" aria-hidden="true">
+            <a th:href="@{/main}" class="home" aria-label="홈으로">
                 <!-- home 아이콘 -->
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                      xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 10.5L12 3L21 10.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5Z"
                           stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                 </svg>
+            </a>
             </div>
 
             <p class="app-title">관리자 페이지</p>
@@ -187,12 +188,14 @@
 
             <div class="actions">
                 <!-- 승인 -->
-                <form th:action="@{/admin/users/{id}/approve(id=${u.id})}" method="post">
+                <form th:action="@{/user/approve/{id}(id=${u.id})}" method="post"
+                    onsubmit="return confirm('승인하시겠습니까?');">
                     <button class="btn btn-approve" type="submit">승인</button>
                 </form>
 
                 <!-- 거절 -->
-                <form th:action="@{/admin/users/{id}/reject(id=${u.id})}" method="post">
+                <form th:action="@{/user/reject/{id}(id=${u.id})}" method="post"
+                      onsubmit="return confirm('정말 거절하시겠습니까?');">
                     <button class="btn btn-reject" type="submit">거절</button>
                 </form>
             </div>
@@ -202,3 +205,11 @@
 </main>
 </body>
 </html>
+
+<script th:if="${successMessage}">
+    alert('[[${successMessage}]]');
+</script>
+
+<script th:if="${errorMessage}">
+    alert('[[${errorMessage}]]');
+</script>

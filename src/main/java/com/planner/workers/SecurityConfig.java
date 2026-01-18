@@ -1,5 +1,6 @@
 package com.planner.workers;
 
+import com.planner.workers.user.LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +17,7 @@ import org.springframework.util.AntPathMatcher;
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         // 로그인 페이지, 회원가입, 정적 리소스는 허용
@@ -27,16 +28,23 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**"
                         ).permitAll()
-
-                        // 그 외 모든 요청은 로그인 필요
-                        .anyRequest().authenticated())
+                        .anyRequest().hasAnyRole("MEMBER","ADMIN")
+                )
                 .formLogin((formLogin) -> formLogin
                         .loginPage("/user/login")
-                        .defaultSuccessUrl("/"))
+                        .successHandler(loginSuccessHandler)
+                )
                 .logout((logout) -> logout
                         .logoutUrl("/user/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true))
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((request,response,accessDeniedException) -> {
+                            // Guest등 "권한 부족"으로 403 발생 시
+                            // 세션을 지우고 로그인 페이지로 돌려보내기 (메시지 파라미터 포함)
+                            request.getSession().invalidate();
+                            response.sendRedirect("/user/login?pending");
+                        }))
                 ;
         return http.build();
     }
